@@ -1,0 +1,6 @@
+
+// update local, no change to remote.
+
+git fetch origin
+git reset --hard origin/main
+git clean -fd
