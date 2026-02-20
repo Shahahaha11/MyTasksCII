@@ -8,6 +8,8 @@
 // #include<iostream>
 
 
+// Extra : Problem 3 : power-option In project 1 format. Your feedback will be appreciated.
+
 class power_option_mc:  public monte_carlo_pricer{
 private :
     double expiry;
@@ -40,13 +42,11 @@ double pricer() const override
     {
         double g = get_one_gaussian_by_box_muller();
         double this_spot = moved_spot * exp(root_variance * g);
-// power option : payoff = max^2(St-K, 0)
-        double strike2 = strike*strike;
-        double this_spot2 =  this_spot * this_spot;
+// power option : payoff = max^2(St-K, 0) 
         if (a == 'c') {
-            (this_spot >= strike) ? running_sum += this_spot2 - strike2 : running_sum += 0.0;
+            (this_spot >= strike) ? running_sum += pow(this_spot - strike, 2) : running_sum += 0.0;
         } else if (a == 'p') {
-             (this_spot <= strike) ? running_sum += strike2- this_spot2 : running_sum += 0.0;
+             (this_spot <= strike) ? running_sum += pow(strike- this_spot, 2) : running_sum += 0.0;
         } else ASSERT(false);
 
     }
