@@ -9,7 +9,6 @@ public:
     virtual ~payoffCustomCall() = default;
 private:
     double strike_;
-
 };
 
 class payoffCustomPut : public Payoff{

@@ -3,7 +3,7 @@
 Option::Option(Payoff &thePayOff_, double expiry_) : thePayOff(thePayOff_), expiry(expiry_){}
 
 // KEY FUNCTION :
-double Option::get_option_payoff (double spot) const{
+double Option::get_option_payoff(double spot) const{
     return thePayOff(spot);
 }
 
