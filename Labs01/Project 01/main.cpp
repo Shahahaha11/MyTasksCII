@@ -26,7 +26,7 @@ int main() {
     double r = 0.05;
     long unsigned int numPaths = 100000;
     char optType = 'c';
-    double value = 5.0;  // Q payoff for digital_option and double_digital_option
+    double value = 1.0;  // Q payoff for digital_option and double_digital_option
     std::srand(time(nullptr)); //nullptr to avoid future name clashes
     
     vanilla_option_mc vop(expiry, strike, spot, vol, r, numPaths, optType);
