@@ -61,24 +61,6 @@ tibble(
 # Build an R function based on that function and give it a name "BondPrice1',
 # as it will be used in the next steps.
 
-cppFunction(
-  "
-    double BondPrice1(int n,
-                  double coupon, 
-                  int m, 
-                  double ytm, 
-                  double f){
-  double price = 0;
-  for (int i = 1; i <= (n*m); ++i){
-    price += (coupon*f/m)/pow((1+ytm/m), double(i));
-  }
-  price += f/pow(1+ytm/m, double(n*m)) ;
-  return price;
-}
-  "
-)
-
-
 # 3 Comparing two relationships ================================================
 bond_data <-
   tibble(
@@ -159,16 +141,16 @@ cppFunction(
               double y;
               double d;
               int long counter;
-            
+
               for(int i = 0; i < N; i++){
                 x = ((double)rand()/(double)RAND_MAX);
                 y = ((double)rand()/(double)RAND_MAX);
                 d = sqrt(x * x + y * y);
                 if (d <= 1) counter++;
               }
-            
+
               return 4.0 * counter / N;
-            
+
             }
             "
 )
@@ -182,7 +164,7 @@ cppFunction(
     NumericVector x = runif(N);
     NumericVector y = runif(N);
     NumericVector d = sqrt(x * x + y * y);
-    
+
     return 4.0 * sum(d <= 1.0) / N;
   }
   "
@@ -236,10 +218,12 @@ rwalk |>
 # Write in C++ and implement in R functions which return:
 
 # a) simple moving average with given memory: SMA(x, k)
-
+sourceCpp("Project_cpp01/sma.cpp")
+getwd()
 # b) exponentially weighted moving average with given memory: EWMA(x, k)
+sourceCpp("Project_cpp01/ewma.cpp")
 
-# c) moving window standard deviation with given memory: runningSD(x, k)
+# c) moving window standard deviation  with given memory: runningSD(x, k)
 
 # d) moving window median with given memory: runningMedian(x,k)
 

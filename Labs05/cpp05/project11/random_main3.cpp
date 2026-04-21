@@ -48,31 +48,31 @@ int main()
     ConfidenceLimits gatherer1;
     ConfidenceLimits gatherer2;
     RandomParkMiller generator1(1);
-    AntiThetic generator2(generator1); 
-    //because you want to initialize this with
-    //  something coming from RandomBase type
+    AntiThetic generator2(generator1);
+    // because you want to initialize this with
+    //   something coming from RandomBase type
 
     gatherer1.reset();
     simple_monte_carlo8(the_option,
-        spot,
-        VolParam,
-        rParam,
-        number_of_paths,
-        gatherer1,
-        generator1);
+                        spot,
+                        VolParam,
+                        rParam,
+                        number_of_paths,
+                        gatherer1,
+                        generator1);
 
-        simple_monte_carlo8(the_option,
-        spot,
-        VolParam,
-        rParam,
-        number_of_paths,
-        gatherer2,
-        generator2);
-        vector<vector<double>> result1 = gatherer1.get_results_so_far();
-        gatherer1.reset();
-        
-        vector<vector<double>> result2 = gatherer2.get_results_so_far();
-    cout << "\nFor the call price the results using RandomParkMiller are: \n";
+    gatherer2.reset();
+    simple_monte_carlo8(the_option,
+                        spot,
+                        VolParam,
+                        rParam,
+                        number_of_paths,
+                        gatherer2,
+                        generator2);
+    vector<vector<double>> result1 = gatherer1.get_results_so_far();
+
+    vector<vector<double>> result2 = gatherer2.get_results_so_far();
+    cout << "\nFor the call price the results without Antithetic sampling are: \n";
     print_results(result1);
 
     cout << "\nFor the call price the results using AntiThetic sampling are: \n";
