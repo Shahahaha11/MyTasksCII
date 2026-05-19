@@ -13,14 +13,14 @@ detach("package:OptionPricer", unload = TRUE) # if it still is in memory
 
 # from binaries (no need to rebuild)
 install.packages(
-  "../OptionPricer_1.0_R_x86_64-pc-linux-gnu.tar.gz",
+  "/Users/shah/CODE_BOOK_4/C++/MyTasks/07/OptionPricer2_0.1.0.tgz",
   type = "binaries",
   repos = NULL
 )
 # or from source (rebuilt automatically)
-install.packages("../OptionPricer_1.0.tar.gz", type = "source", repos = NULL)
+# install.packages("../OptionPricer_1.0.tar.gz", type = "source", repos = NULL)
 # load to memory
-library("OptionPricer")
+library("OptionPricer2")
 
 # 3. Call the function
 MCEuropeanOptionPricer(0.5, 100, 95, 0.2, 0.06, 10000, 0)
@@ -33,9 +33,13 @@ MCEuropeanCall <- function(expiry) {
 }
 
 # 5. call the function
-MCEuropeanCall(0.5)
+MCEuropeanCall(0.2)
 
-# 6. arguments values of values of cunction
+# Now we want to make that seed really random.
+# when we compute that function twice in the same minute we get the same result.
+# Change that seed for each computation.
+
+# 6. arguments values of values of function
 expiry <- seq(0.0001, 0.1, by = 0.001)
 result <- sapply(expiry, MCEuropeanCall)
 
@@ -59,6 +63,7 @@ MCEuropeanCallLoops <- function(loops) {
 }
 
 MCEuropeanCallLoops(500)
+MCEuropeanCallLoops(300)
 loops <- 2^(1:25)
 result <- sapply(loops, MCEuropeanCallLoops)
 
@@ -98,3 +103,5 @@ ggplot(data = result.df, aes(x = spot, y = result, group = vol, colour = vol)) +
     x = "spot price",
     y = "price of European call option"
   )
+# we will replace our interface to excel
+

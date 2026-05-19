@@ -7,6 +7,7 @@
 // #include "path_dependent_geometric_asian.h"
 // #include "path_dependent_european.h"
 #include "path_dependent_lookback.h"
+#include "barrier_straddle.h"
 #include "exotic_bs_engine.h"
 
 using namespace std;
@@ -69,7 +70,8 @@ int main()
     }
 
     // Create an object of PayOffCall type.
-    PayOffCall the_payoff(strike);
+    PayOffCall the_payoff1(strike);
+    PayOffPut the_payoff2(strike);
 
     // Create an array (an object of type MJArray) which will store
     // time index for each date (interval).
@@ -94,30 +96,36 @@ int main()
     // PathDependentAsian the_option(times, expiry, the_payoff); (1)
     // PathDependentGeometricAsian the_option(times, expiry, the_payoff); (2)
     // PathDependentEuropean the_option(times, expiry, the_payoff);
-    PathDependentLookback the_option(times, expiry, the_payoff);
+    // PathDependentLookback the_option(times, expiry, the_payoff);
+    BarrierStraddle the_option1(times, expiry, the_payoff1);
+    BarrierStraddle the_option2(times, expiry, the_payoff2);
 
     // Create the object of the StatisticsMean class
     // responsible for calculating the mean discounted pay-off.
     // Note, that the StatisticsMean class inherits after StatisticsMC base class.
-    StatisticsMean gatherer;
+    StatisticsMean gathererA;
+    StatisticsMean gathererB;
 
     // Create an object of the ConvergenceTable.
     // We use here the decoration pattern: gatherer2 can take the gatherer as argument
     // and store it as its data member. This trick is called 'the decoration pattern'.
     // Note, that the ConvergenceTable class also inherits after StatisticsMC base class.
-    ConvergenceTable gatherer2(gatherer);
+    ConvergenceTable gatherer2A(gathererA);
+    ConvergenceTable gatherer2B(gathererB);
 
     // Create an object of the RandomParkMiller class, responsible for drawing normal variates.
     // RandomParkMiller inherits after RandomBase base class.
     // numberOfDates serves as dimensionality, for example: for expiry = 0.5 we have 126 days to maturity,
     // and this means, that for each of 126 we have to simulate increment, ie. draw a single gaussian variate.
     // The second argument (seed) is missing here, as it has a default value.
-    RandomParkMiller generator(number_of_dates);
+    RandomParkMiller generator1(number_of_dates);
+    RandomParkMiller generator2(number_of_dates);
 
     // Create an object of the AntiThetic class.
     // AntiThetic class also inherits after the RandomBase class.
     // generator2 can take generator as its argument and store it as its data member.
-    AntiThetic generator2(generator);
+    
+    // AntiThetic generator2(generator);
 
     // Create our ENGINE: an object of the ExoticBSEngine. This class inherits after the ExoticEngine base class
     // and is responsible for simulating the single paths of underlying prices, according to the
@@ -127,24 +135,27 @@ int main()
     // 2) three (constant) stochastic process parameters
     // 3) pseudo-random numbers generator, decorated with the Antithetic subclass
     // 4) spot price of the underlying (at the moment of pricing)
-    ExoticBSEngine the_engine(the_option, r_param, d_param, vol_param, generator2, spot);
+    ExoticBSEngine the_engine1(the_option1, r_param, d_param, vol_param, generator1, spot);
+    ExoticBSEngine the_engine2(the_option2, r_param, d_param, vol_param, generator2, spot);
 
     // Run OUR ENGINE: call the doSimulation() method of theEngine (i.e the object of the ExoticBSEngine subclass)
     // This method does the job of the SimpleMonteCarlo() method, ie. performs looping.
     // It needs to know: which statistics gatherer to use and how many times to loop.
-    the_engine.do_simulation(gatherer2, number_of_paths);
+    the_engine1.do_simulation(gatherer2A, number_of_paths);
+    the_engine2.do_simulation(gatherer2B, number_of_paths);
 
     // We gather the results, ie. the convergence table after the desired number of loops
     // into results of type 'vector of vector of doubles'.
-    vector<vector<double>> results = gatherer2.get_results_so_far();
+    vector<vector<double>> results1 = gatherer2A.get_results_so_far();
+    vector<vector<double>> results2 = gatherer2B.get_results_so_far();
 
     // Finally, we print out the results to the console.
     cout << "\nFor the Asian call price the results are \n";
 
-    for (unsigned long i = 0; i < results.size(); i++)
+    for (unsigned long i = 0; i < results2.size(); i++)
     {
-        for (unsigned long j = 0; j < results[i].size(); j++)
-            cout << results[i][j] << " ";
+        for (unsigned long j = 0; j < results2[i].size(); j++)
+            cout << results1[i][j] + results2[i][j] << " ";
         cout << "\n";
     }
 
